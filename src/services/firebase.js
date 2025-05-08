@@ -1,8 +1,6 @@
-// firebase.js (backend)
 import { initializeApp } from "firebase/app";
-import { getFirestore, doc, getDoc } from "firebase/firestore";
+import { getFirestore, doc, getDoc, updateDoc, setDoc, increment } from "firebase/firestore";
 
-// Cargar las variables de entorno
 const firebaseConfig = {
   apiKey: process.env.FIREBASE_API_KEY,
   authDomain: process.env.FIREBASE_AUTH_DOMAIN,
@@ -16,13 +14,25 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// Función para obtener las visitas desde Firestore
+const docRef = doc(db, "contador", "visitas");
+
 export const getVisits = async () => {
-  const docRef = doc(db, "contador", "visitas");
   const docSnap = await getDoc(docRef);
   if (docSnap.exists()) {
     return docSnap.data().cantidad;
   } else {
     throw new Error("Documento no encontrado");
+  }
+};
+
+export const incrementVisits = async () => {
+  const docSnap = await getDoc(docRef);
+  if (docSnap.exists()) {
+    await updateDoc(docRef, { cantidad: increment(1) });
+    const updated = await getDoc(docRef);
+    return updated.data().cantidad;
+  } else {
+    await setDoc(docRef, { cantidad: 1 });
+    return 1;
   }
 };
