@@ -1,10 +1,22 @@
-// index.js
 import express from "express";
 import cors from "cors";
 import { getVisits, incrementVisits } from "./firebase.js";
 
 const app = express();
-app.use(cors()); // habilita CORS para que el frontend pueda llamar a la API
+
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://TU-FRONTEND.vercel.app" // reemplaza esto por tu dominio real
+];
+
+app.use(
+  cors({
+    origin: allowedOrigins,
+    methods: ["GET", "POST"],
+    credentials: true,
+  })
+);
+
 app.use(express.json());
 
 const port = process.env.PORT || 5000;
