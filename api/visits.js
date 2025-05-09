@@ -1,4 +1,4 @@
-import { db } from "../firebase.js"; // Asegúrate que uses la versión correcta de firebase.js con { db }
+import { db } from "./firebase.js"; // Asegúrate que uses la versión correcta de firebase.js con { db }
 
 export default async function handler(req, res) {
   if (req.method !== "GET") {
