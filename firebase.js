@@ -1,6 +1,7 @@
-import { initializeApp, cert } from "firebase-admin/app";
-import { getFirestore } from "firebase-admin/firestore";
+import { initializeApp, cert, getApps } from "firebase-admin/app";
+import { getFirestore, FieldValue } from "firebase-admin/firestore";
 
+// Cargar las credenciales desde variables de entorno
 const firebaseConfig = {
   type: process.env.FIREBASE_TYPE,
   project_id: process.env.FIREBASE_PROJECT_ID,
@@ -14,12 +15,12 @@ const firebaseConfig = {
   client_x509_cert_url: process.env.FIREBASE_CLIENT_CERT_URL,
 };
 
-import pkg from "firebase-admin";
-const { apps, initializeApp: initAdmin } = pkg;
-
-if (!apps.length) {
-  initAdmin({ credential: cert(firebaseConfig) });
+if (!getApps().length) {
+  initializeApp({
+    credential: cert(firebaseConfig),
+  });
 }
 
 const db = getFirestore();
-export default db;
+
+export { db, FieldValue };

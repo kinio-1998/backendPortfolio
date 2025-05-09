@@ -1,5 +1,4 @@
-import db from "../firebase.js";
-import { FieldValue } from "firebase-admin/firestore";
+import { db, FieldValue } from "../../firebase.js"; // o "../firebase.js" según ubicación
 
 export default async function handler(req, res) {
   if (req.method !== "POST") {
