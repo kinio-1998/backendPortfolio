@@ -1,4 +1,4 @@
-import { db } from "./firebase";
+import { db } from "./firebase.js";
 
 export default async function handler(req, res) {
   res.setHeader("Access-Control-Allow-Origin", "*");
@@ -9,20 +9,22 @@ export default async function handler(req, res) {
     return res.status(200).end();
   }
 
-  if (req.method === "GET") {
-    try {
-      const snapshot = await db.collection("visitors").get();
-      const visitors = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
-
-      return res.status(200).json({ visitors });
-    } catch (error) {
-      console.error("Error al obtener visitantes:", error);
-      return res.status(500).json({ error: "Error al obtener visitantes" });
-    }
+  if (req.method !== "GET") {
+    return res.status(405).json({ error: "Método no permitido" });
   }
 
-  return res.status(405).json({ error: "Método no permitido" });
+  try {
+    const ref = db.collection("contador").doc("visitors"); // <--- Aquí el nombre correcto
+    const doc = await ref.get();
+
+    if (!doc.exists) {
+      return res.status(200).json({ visits: 0 });
+    }
+
+    const data = doc.data();
+    return res.status(200).json({ visits: data.cantidad || 0 }); // <--- Asegúrate de que el campo sea "cantidad"
+  } catch (error) {
+    console.error("Error al obtener visitas:", error);
+    return res.status(500).json({ error: "Error en el servidor" });
+  }
 }
