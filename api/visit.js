@@ -53,7 +53,7 @@ export default async function handler(req, res) {
     }
 
     // Actualizar contador global
-    const counterRef = db.collection("contador").doc("visitas");
+    const counterRef = db.collection("contador").doc("visitors");
     await counterRef.update({ cantidad: FieldValue.increment(1) });
 
     return res.status(200).json({ message: "Visita registrada con ubicación" });
