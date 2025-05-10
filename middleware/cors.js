@@ -1,22 +1,23 @@
 export const corsMiddleware = (req, res) => {
-  const allowedOrigins = process.env.FRONTEND_ORIGINS?.split(",") || [];
+  const allowedOrigins = (process.env.FRONTEND_ORIGINS || "")
+    .split(",")
+    .map((origin) => origin.trim());
+
   const origin = req.headers.origin;
 
   if (allowedOrigins.includes(origin)) {
     res.setHeader("Access-Control-Allow-Origin", origin);
   } else {
-    // Opcional: deniega o ignora si no está permitido
-    res.status(403).json({ error: "CORS origin not allowed" });
+    res.status(403).json({ error: "Origen no permitido" });
     return false;
   }
-
   res.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
 
   if (req.method === "OPTIONS") {
     res.status(200).end();
-    return false; // corta la ejecución
+    return false; 
   }
 
-  return true; // continuar con el handler principal
-};
+  return true; 
+}
