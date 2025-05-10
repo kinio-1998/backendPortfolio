@@ -3,9 +3,10 @@ import { db, FieldValue } from "./firebase.js";
 import { sendTelegramNotification } from "./sendTelegram.js";
 
 export default async function handler(req, res) {
-  if(!corsMiddleware(req,res)) return;
-  if (req.method !== "POST") return res.status(405).json({ error: "Método no permitido" });
-  
+  if (!corsMiddleware(req, res)) return;
+  if (req.method !== "POST")
+    return res.status(405).json({ error: "Método no permitido" });
+
   try {
     const { ip, fingerprint } = req.body;
 
@@ -26,7 +27,7 @@ export default async function handler(req, res) {
     } catch (geoError) {
       console.warn("Error al obtener ubicación IP:", geoError);
     }
-    const ubicacion =`${ciudad}, ${region}, ${pais}`;
+    const ubicacion = `${ciudad}, ${region}, ${pais}`;
     const docRef = db.collection("visitors").doc(fingerprint);
     const doc = await docRef.get();
 
@@ -44,13 +45,12 @@ export default async function handler(req, res) {
         timestamp: FieldValue.serverTimestamp(),
         ultimoIngreso: FieldValue.serverTimestamp(),
       });
+ 
+      await sendTelegramNotification(ip, fingerprint, ubicacion);
+
+      const counterRef = db.collection("contador").doc("visitors");
+      await counterRef.update({ cantidad: FieldValue.increment(1) });
     }
-
-    await sendTelegramNotification(ip,fingerprint,ubicacion)
-    
-    const counterRef = db.collection("contador").doc("visitors");
-    await counterRef.update({ cantidad: FieldValue.increment(1) });
-
     return res.status(200).json({ message: "Visita registrada con ubicación" });
   } catch (error) {
     console.error("Error al registrar visita:", error);
