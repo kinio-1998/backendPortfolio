@@ -1,7 +1,7 @@
 import { corsMiddleware } from "../middleware/cors";
 
 export default async function handler(req, res) {
-  if(!corsMiddleware(req,res)) return;
+  if(!corsMiddleware(req,res)) return
   if (req.method !== "POST") return res.status(405).json({ error: "Método no permitido" });
 
   const { password } = req.body;

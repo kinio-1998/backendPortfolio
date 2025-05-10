@@ -1,5 +1,6 @@
 // backend/api/visitors.js
 
+import { corsMiddleware } from "../middleware/cors";
 import { db } from "./firebase";
 
 export default async function handler(req, res) {

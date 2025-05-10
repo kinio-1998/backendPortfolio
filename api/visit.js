@@ -1,3 +1,4 @@
+import { corsMiddleware } from "../middleware/cors.js";
 import { db, FieldValue } from "./firebase.js";
 import { sendTelegramNotification } from "./sendTelegram.js";
 
