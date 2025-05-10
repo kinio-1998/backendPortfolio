@@ -1,5 +1,5 @@
 export const corsMiddleware = (req, res) => {
-  const allowedOrigin = "";
+  let  allowedOrigin = "";
   if (req.headers.origin === process.env.FRONTEND_ORIGINS) {
     allowedOrigin = process.env.FRONTEND_ORIGINS;
   } else if (req.headers.origin === "http://localhost:5173") {
