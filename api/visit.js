@@ -2,19 +2,9 @@ import { db, FieldValue } from "./firebase.js";
 import { sendTelegramNotification } from "./sendTelegram.js";
 
 export default async function handler(req, res) {
-  // CORS headers
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
-
-  if (req.method === "OPTIONS") {
-    return res.status(200).end();
-  }
-
-  if (req.method !== "POST") {
-    return res.status(405).json({ error: "Método no permitido" });
-  }
-
+  if(!corsMiddleware(req,res)) return;
+  if (req.method !== "POST") return res.status(405).json({ error: "Método no permitido" });
+  
   try {
     const { ip, fingerprint } = req.body;
 
@@ -22,7 +12,6 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: "Faltan datos: IP o fingerprint" });
     }
 
-    // 🔍 Obtener ubicación por IP
     let ciudad = "",
       region = "",
       pais = "";
@@ -57,7 +46,7 @@ export default async function handler(req, res) {
     }
 
     await sendTelegramNotification(ip,fingerprint,ubicacion)
-    // Actualizar contador global
+    
     const counterRef = db.collection("contador").doc("visitors");
     await counterRef.update({ cantidad: FieldValue.increment(1) });
 
