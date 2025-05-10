@@ -2,8 +2,9 @@ export const sendTelegramNotification = async (ip, fingerprint,ubicacion) => {
   const TOKEN = process.env.TELEGRAM_TOKEN;
   const CHAT_ID = process.env.TELEGRAM_CHAT_ID;
 
-  const mensaje = `📢 *Nuevo visitante*\n🌐 IP: ${ip}\n🧠 Fingerprint: ${fingerprint} La ip es de: ${ubicacion}`;
-
+  const mensaje = `📢 *Nuevo visitante*\n🌐 IP: ${ip}\n🧠 Fingerprint: ${fingerprint} \n 📍 La ip es de: ${ubicacion}`;
+console.log("TOKEN:", TOKEN);
+console.log("TOKEN:", TOKEN);
   try {
     const res = await fetch(`https://api.telegram.org/bot${TOKEN}/sendMessage`, {
       method: "POST",
