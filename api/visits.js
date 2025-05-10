@@ -1,4 +1,4 @@
-import { db } from "./firebase.js";
+import { db } from "./firebase";
 
 export default async function handler(req, res) {
   res.setHeader("Access-Control-Allow-Origin", "*");
@@ -9,22 +9,20 @@ export default async function handler(req, res) {
     return res.status(200).end();
   }
 
-  if (req.method !== "GET") {
-    return res.status(405).json({ error: "Método no permitido" });
-  }
+  if (req.method === "GET") {
+    try {
+      const snapshot = await db.collection("visitors").get();
+      const visitors = snapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
 
-  try {
-    const ref = db.collection("contador").doc("visitas");
-    const snapshot = await ref.get();
-
-    if (!snapshot.exists) {
-      return res.status(404).json({ error: "Documento no encontrado" });
+      return res.status(200).json({ visitors });
+    } catch (error) {
+      console.error("Error al obtener visitantes:", error);
+      return res.status(500).json({ error: "Error al obtener visitantes" });
     }
-
-    const data = snapshot.data();
-    res.status(200).json({ visits: data.cantidad });
-  } catch (error) {
-    console.error("Error al obtener visitas:", error);
-    res.status(500).json({ error: "Error al obtener visitas" });
   }
+
+  return res.status(405).json({ error: "Método no permitido" });
 }
