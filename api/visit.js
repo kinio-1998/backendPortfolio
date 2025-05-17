@@ -28,7 +28,7 @@ export default async function handler(req, res) {
       console.warn("Error al obtener ubicación IP:", geoError);
     }
     const ubicacion = `${ciudad}, ${region}, ${pais}`;
-    const docRef = db.collection("visitors").doc(fingerprint);
+    const docRef = db.collection("visitors").doc(ip);
     const doc = await docRef.get();
 
     if (doc.exists) {
