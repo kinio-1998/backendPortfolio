@@ -1,10 +1,10 @@
 export const corsMiddleware = (req, res) => {
-  let  allowedOrigin = "";
-  if (req.headers.origin === process.env.FRONTEND_ORIGINS) {
-    allowedOrigin = process.env.FRONTEND_ORIGINS;
-  }/* else if (req.headers.origin === "http://localhost:5173") {
-    allowedOrigin = process.env.FRONTEND_ORIGINS;
-  }*/
+  const allowedOrigin = process.env.FRONTEND_ORIGINS;
+
+  if (req.headers.origin !== allowedOrigin) {
+    res.status(403).json({ error: "Origen no autorizado" });
+    return false;
+  }
 
   res.setHeader("Access-Control-Allow-Origin", allowedOrigin);
   res.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS");
@@ -12,8 +12,8 @@ export const corsMiddleware = (req, res) => {
 
   if (req.method === "OPTIONS") {
     res.status(200).end();
-    return false; // corta la ejecución
+    return false;
   }
 
-  return true; // continuar con el handler principal
+  return true;
 };
